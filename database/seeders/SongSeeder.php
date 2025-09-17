@@ -72,8 +72,8 @@ class SongSeeder extends Seeder
             DB::table('songs')->insert([
                 'name' => $name,
                 'user_id' => $userId,
-                'thumbnail_url' => env('APP_URL') . '/public/uploads/thumbnails/' . $this->thumbnails[$index],
-                'song_url' => env('APP_URL') . '/public/uploads/songs/' . $this->files[$index],
+                'thumbnail_url' => env('APP_URL') . '/uploads/thumbnails/' . $this->thumbnails[$index],
+                'song_url' => env('APP_URL') . '/uploads/songs/' . $this->files[$index],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
