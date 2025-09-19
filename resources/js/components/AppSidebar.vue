@@ -1,22 +1,24 @@
 <script setup>
-import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
 import { routes } from '@/router';
 </script>
 
 <template>
     <Sidebar collapsible="icon">
-        <SidebarContent class="p-0.5">
+        <SidebarContent class="pt-2.5">
             <SidebarGroup>
-                <SidebarMenu>
-                    <SidebarMenuItem v-for="route in routes" :key="route.id">
-                        <SidebarMenuButton asChild>
-                            <RouterLink :to="route.path" active-class="underline font-semibold">
-                                <component :is="route.icon" :size="100" />
-                                <span>{{ route.name }}</span>
-                            </RouterLink>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+                <SidebarGroupContent>
+                    <SidebarMenu>
+                        <SidebarMenuItem v-for="route in routes" :key="route.id">
+                            <SidebarMenuButton as-child :is-active="route.path == $route.path">
+                                <RouterLink :to="route.path">
+                                    <component :is="route.icon" />
+                                    <span>{{ route.name }}</span>
+                                </RouterLink>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarGroupContent>
             </SidebarGroup>
         </SidebarContent>
     </Sidebar>
