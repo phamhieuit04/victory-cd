@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppToggleTheme from './AppToggleTheme.vue';
-import { Separator } from './ui/separator';
-import { SidebarTrigger } from './ui/sidebar';
+import { Separator } from '../ui/separator';
+import { SidebarTrigger } from '../ui/sidebar';
 
 </script>
 

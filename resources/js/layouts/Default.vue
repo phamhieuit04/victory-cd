@@ -1,6 +1,6 @@
 <script setup>
-import AppHeader from '@/components/AppHeader.vue';
-import AppSidebar from '@/components/AppSidebar.vue';
+import AppHeader from '@/components/partials/AppHeader.vue';
+import AppSidebar from '@/components/partials/AppSidebar.vue';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 </script>
