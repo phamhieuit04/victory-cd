@@ -5,16 +5,22 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from "./utils";
 
 const props = defineProps({
-    class: { type: null, required: false },
+  class: { type: null, required: false },
 });
 
 const { toggleSidebar } = useSidebar();
 </script>
 
 <template>
-    <Button class="cursor-pointer" data-sidebar="trigger" data-slot="sidebar-trigger" variant="ghost" size="icon"
-        :class="cn('size-8', props.class)" @click="toggleSidebar">
-        <PanelLeft />
-        <span class="sr-only">Toggle Sidebar</span>
-    </Button>
+  <Button
+    data-sidebar="trigger"
+    data-slot="sidebar-trigger"
+    variant="ghost"
+    size="icon"
+    :class="cn('h-7 w-7', props.class)"
+    @click="toggleSidebar"
+  >
+    <PanelLeft />
+    <span class="sr-only">Toggle Sidebar</span>
+  </Button>
 </template>
