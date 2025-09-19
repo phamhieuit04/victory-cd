@@ -22,10 +22,11 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         for ($i = 0; $i < 5; $i++) {
+            $time = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
             DB::table('users')->insert([
                 'name' => $this->names[$i],
-                'created_at' => now(),
-                'updated_at' => now()
+                'created_at' => $time,
+                'updated_at' => $time
             ]);
         }
     }

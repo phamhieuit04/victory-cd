@@ -69,13 +69,14 @@ class SongSeeder extends Seeder
     {
         foreach ($this->names as $index => $name) {
             $userId = intdiv($index, 3) + 1;
+            $time = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
             DB::table('songs')->insert([
                 'name' => $name,
                 'user_id' => $userId,
                 'thumbnail_url' => env('APP_URL') . '/uploads/thumbnails/' . $this->thumbnails[$index],
                 'song_url' => env('APP_URL') . '/uploads/songs/' . $this->files[$index],
-                'created_at' => now(),
-                'updated_at' => now()
+                'created_at' => $time,
+                'updated_at' => $time
             ]);
         }
     }
