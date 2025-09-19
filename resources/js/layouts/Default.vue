@@ -1,18 +1,16 @@
 <script setup>
+import AppHeader from '@/components/AppHeader.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
-import AppToggleTheme from '@/components/AppToggleTheme.vue';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 </script>
 
 <template>
-    <SidebarProvider style="--sidebar-width: 20rem;">
+    <SidebarProvider style="--sidebar-width: 18rem;">
         <AppSidebar />
-        <main class="p-2.5 container mx-auto">
-            <div class="flex justify-between mb-2.5">
-                <SidebarTrigger />
-                <AppToggleTheme />
-            </div>
+        <SidebarInset class="p-4">
+            <AppHeader />
             <slot />
-        </main>
+        </SidebarInset>
     </SidebarProvider>
 </template>
