@@ -23,10 +23,9 @@ class PaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, PayOSService $payOSService)
     {
         $param = $request->all();
-        $now = Carbon::now();
 
         try {
             $bill = Bill::create([
@@ -34,8 +33,8 @@ class PaymentController extends Controller
                 'order_code' => intval(substr(strval(microtime(true) * 10000), -6)),
                 'price' => 10000,
                 'status' => 1,
-                'created_at' => $now,
-                'updated_at' => $now
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
 
             $song = Song::find($param['song_id']);
@@ -47,14 +46,13 @@ class PaymentController extends Controller
                 ]
             ];
 
-            $res = PayOSService::createPaymentLink($bill, $item);
-            if (!is_null($res)) {
-                $bill->checkout_url = $res['checkoutUrl'];
-
-                return ApiResponse::success($bill);
-            } else {
+            $res = $payOSService->createPaymentLink($bill, $item);
+            if (is_null($res)) {
                 return ApiResponse::dataNotfound();
             }
+            $bill->checkout_url = $res['checkoutUrl'];
+
+            return ApiResponse::success($bill);
         } catch (\Throwable $th) {
             Log::error($th);
             return ApiResponse::internalServerError();

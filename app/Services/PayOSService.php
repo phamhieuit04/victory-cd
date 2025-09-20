@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Bill;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use PayOS\PayOS;
 
 class PayOSService
@@ -27,23 +27,23 @@ class PayOSService
      *
      * @param \App\Models\Bill $bill
      */
-    public static function createPaymentLink(Bill $bill, $items)
+    public function createPaymentLink(Bill $bill, array $items)
     {
-        $self = new self;
         try {
             $data = [
                 'orderCode' => $bill->order_code,
                 'amount' => $bill->price,
                 'description' => 'Thanh toan hoa don ' . $bill->order_code,
                 'items' => $items,
-                'returnUrl' => 'http://localhost:5173/paysuccess',
-                'cancelUrl' => 'http://localhost:5173/payfail',
-                'expiredAt' => Carbon::now()->addMinutes(10)->timestamp
+                'returnUrl' => 'http://localhost:8000/paysuccess',
+                'cancelUrl' => 'http://localhost:8000/payfail',
+                'expiredAt' => now()->addMinutes(10)->timestamp
             ];
-            $result = $self->payOS->createPaymentLink($data);
+            $result = $this->payOS->createPaymentLink($data);
 
             return $result;
         } catch (\Throwable $th) {
+            Log::error($th);
             return null;
         }
     }
