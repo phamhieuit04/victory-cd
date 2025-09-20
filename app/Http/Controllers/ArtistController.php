@@ -13,12 +13,20 @@ class ArtistController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            return ApiResponse::success(
-                User::select(['id', 'name'])->get()
-            );
+            $params = $request->input();
+            $offset = 0;
+            if (isset($params['offset'])) {
+                $offset = $params['offset'];
+            }
+            $artists = User::select(['id', 'name'])->withCount('songs')
+                ->skip($offset)->limit(10)->get();
+            return ApiResponse::success([
+                'artists' => $artists,
+                'total' => User::count()
+            ]);
         } catch (\Throwable $th) {
             Log::error($th);
             return ApiResponse::internalServerError();

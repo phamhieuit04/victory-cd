@@ -12,18 +12,24 @@ class SongController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
+            $params = $request->input();
+            $offset = 0;
+            if (isset($params['offset'])) {
+                $offset = $params['offset'];
+            }
             $songs = Song::select([
                 'songs.id',
                 'songs.name',
                 'songs.song_url',
                 'songs.thumbnail_url',
                 'songs.user_id',
-                'users.id',
                 'users.name as artist_name'
-            ])->join('users', 'songs.user_id', 'users.id')->get();
+            ])->join('users', 'songs.user_id', 'users.id')
+                ->offset($offset)->limit(10)
+                ->get();
             return ApiResponse::success($songs);
         } catch (\Throwable $th) {
             Log::error($th);
@@ -73,7 +79,6 @@ class SongController extends Controller
                 'songs.song_url',
                 'songs.thumbnail_url',
                 'songs.user_id',
-                'users.id',
                 'users.name as artist_name'
             ])->where('songs.id', $id)
                 ->join('users', 'songs.user_id', 'users.id')
