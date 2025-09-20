@@ -30,7 +30,10 @@ class SongController extends Controller
             ])->join('users', 'songs.user_id', 'users.id')
                 ->offset($offset)->limit(10)
                 ->get();
-            return ApiResponse::success($songs);
+            return ApiResponse::success([
+                'songs' => $songs,
+                'total' => Song::count()
+            ]);
         } catch (\Throwable $th) {
             Log::error($th);
             return ApiResponse::internalServerError();

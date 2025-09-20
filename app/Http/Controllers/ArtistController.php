@@ -60,19 +60,29 @@ class ArtistController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         try {
+            $params = $request->input();
+            $offset = 0;
+            if (isset($params['offset'])) {
+                $offset = $params['offset'];
+            }
             $user = User::select(['id', 'name'])->where('id', $id)
                 ->with([
-                    'songs' => function ($query) {
-                        $query->select(['id', 'name', 'thumbnail_url', 'song_url', 'user_id']);
+                    'songs' => function ($query) use ($offset) {
+                        $query->select(['id', 'name', 'thumbnail_url', 'song_url', 'user_id'])
+                            ->offset($offset)->limit(10);
                     }
                 ])->first();
+            $total = User::where('id', $id)->withCount('songs')->first();
             if (blank($user)) {
                 return ApiResponse::dataNotfound();
             }
-            return ApiResponse::success($user);
+            return ApiResponse::success([
+                'user' => $user,
+                'total' => $total->songs_count
+            ]);
         } catch (\Throwable $th) {
             Log::error($th);
             return ApiResponse::internalServerError();
