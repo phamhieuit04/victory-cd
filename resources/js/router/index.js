@@ -3,7 +3,8 @@ import { AudioLines, LayoutDashboard, UserRound } from 'lucide-vue-next';
 import Artists from '@/pages/Artists.vue';
 import Songs from '@/pages/Songs.vue';
 import Dashboard from '@/pages/Dashboard.vue';
-import { ref, unref } from 'vue';
+import ArtistsBlock from '@/components/blocks/ArtistsBlock.vue';
+import SongsBlock from '@/components/blocks/SongsBlock.vue';
 
 export const routes = [
     {
@@ -12,7 +13,6 @@ export const routes = [
         name: 'Dashboard',
         component: Dashboard,
         icon: LayoutDashboard,
-        active: false,
     },
     {
         id: 1,
@@ -20,15 +20,26 @@ export const routes = [
         name: 'Artists',
         component: Artists,
         icon: UserRound,
-        active: false,
+        children: [
+            {
+                path: '',
+                name: 'Artists page',
+                component: ArtistsBlock,
+            },
+            {
+                path: ':id',
+                name: "Artist's song page",
+                component: SongsBlock,
+                props: (route) => ({ artistId: route.params.id }),
+            },
+        ],
     },
     {
         id: 2,
         path: '/songs',
-        name: 'Songs',
+        name: 'Songs page',
         component: Songs,
         icon: AudioLines,
-        active: false,
     },
 ];
 
