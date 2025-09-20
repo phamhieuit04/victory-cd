@@ -13,6 +13,7 @@ export const routes = [
         name: 'Dashboard',
         component: Dashboard,
         icon: LayoutDashboard,
+        isNavigation: true,
     },
     {
         id: 1,
@@ -20,6 +21,7 @@ export const routes = [
         name: 'Artists',
         component: Artists,
         icon: UserRound,
+        isNavigation: true,
         children: [
             {
                 path: '',
@@ -40,6 +42,7 @@ export const routes = [
         name: 'Songs page',
         component: Songs,
         icon: AudioLines,
+        isNavigation: true,
     },
 ];
 

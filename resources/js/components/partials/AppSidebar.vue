@@ -10,7 +10,8 @@ import { routes } from '@/router';
                 <SidebarGroupContent>
                     <SidebarMenu>
                         <SidebarMenuItem v-for="route in routes" :key="route.id">
-                            <SidebarMenuButton as-child :is-active="route.path == $route.path">
+                            <SidebarMenuButton v-if="route.isNavigation" as-child
+                                :is-active="route.path == $route.path">
                                 <RouterLink :to="route.path">
                                     <component :is="route.icon" />
                                     <span>{{ route.name }}</span>
