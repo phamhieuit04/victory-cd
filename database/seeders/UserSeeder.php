@@ -29,5 +29,13 @@ class UserSeeder extends Seeder
                 'updated_at' => $time
             ]);
         }
+        for ($i = 0; $i < 100; $i++) {
+            $time = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
+            DB::table('users')->insert([
+                'name' => fake()->name(),
+                'created_at' => $time,
+                'updated_at' => $time
+            ]);
+        }
     }
 }
