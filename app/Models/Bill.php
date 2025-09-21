@@ -10,6 +10,7 @@ class Bill extends Model
         'song_id',
         'order_code',
         'code_url',
+        'checkout_url',
         'price',
         'status',
     ];

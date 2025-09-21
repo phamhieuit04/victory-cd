@@ -7,22 +7,17 @@ use App\Models\Bill;
 use App\Models\Song;
 use App\Services\PayOSService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request, PayOSService $payOSService)
     {
         $param = $request->all();
@@ -46,11 +41,29 @@ class PaymentController extends Controller
                 ]
             ];
 
-            $res = $payOSService->createPaymentLink($bill, $item);
-            if (is_null($res)) {
-                return ApiResponse::dataNotfound();
-            }
-            $bill->checkout_url = $res['checkoutUrl'];
+            // $res = $payOSService->createPaymentLink($bill, $item);
+            // if (is_null($res)) {
+            //     return ApiResponse::dataNotfound();
+            // }
+            // $bill->checkout_url = $res['checkoutUrl'];
+
+            // Create VietQR
+            $bankBin = "970422"; // MB Bank
+            $accountNo = "0823869522";
+            $accountName = "NGUYEN THI MINH NGOC";
+            $amount = $bill->price;
+
+            $fileName = 'qr_' . $bill->order_code . '.png';
+
+            $qrUrl = "https://img.vietqr.io/image/{$bankBin}-{$accountNo}-compact.png"
+                . "?amount={$amount}&accountName=" . urlencode($accountName);
+
+            $qrImage = file_get_contents($qrUrl);
+
+            Storage::disk('public')->put('qrcodes/' . $fileName, $qrImage);
+
+            $bill->code_url = asset('storage/qrcodes/' . $fileName);
+            $bill->save();
 
             return ApiResponse::success($bill);
         } catch (\Throwable $th) {
@@ -59,25 +72,16 @@ class PaymentController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //

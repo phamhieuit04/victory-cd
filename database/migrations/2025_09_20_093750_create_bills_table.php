@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->bigInteger('song_id')->nullable()->index();
             $table->integer('order_code')->nullable();
             $table->string('code_url')->nullable();
+            $table->string('checkout_url')->nullable();
             $table->integer('price')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
