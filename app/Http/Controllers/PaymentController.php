@@ -7,6 +7,7 @@ use App\Models\Bill;
 use App\Models\Song;
 use App\Services\PayOSService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -59,10 +60,9 @@ class PaymentController extends Controller
                 . "?amount={$amount}&accountName=" . urlencode($accountName);
 
             $qrImage = file_get_contents($qrUrl);
+            Storage::disk('app')->put('qrcodes/' . $fileName, $qrImage);
 
-            Storage::disk('public')->put('qrcodes/' . $fileName, $qrImage);
-
-            $bill->code_url = asset('storage/qrcodes/' . $fileName);
+            $bill->code_url = env('APP_URL') . '/qrcodes/' . $fileName;
             $bill->save();
 
             return ApiResponse::success($bill);
