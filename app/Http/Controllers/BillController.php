@@ -13,24 +13,31 @@ class BillController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
+            $params = $request->input();
+            $offset = 0;
+            if (isset($params['offset'])) {
+                $offset = $params['offset'];
+            }
             $bills = Bill::join('songs', 'bills.song_id', 'songs.id')
-            ->select([
-                'bills.id',
-                'bills.order_code',
-                'bills.code_url',
-                'bills.price',
-                'bills.status',
-                'bills.updated_at',
-                'songs.name as song_name'
-            ])->get()->each(function ($item)  {
-                $item->time_ago = Carbon::parse($item->updated_at)->diffForHumans();
-                unset($item->updated_at);
-            });
+                ->select([
+                    'bills.id',
+                    'bills.order_code',
+                    'bills.code_url',
+                    'bills.price',
+                    'bills.status',
+                    'bills.updated_at',
+                    'songs.name as song_name'
+                ])->offset($offset)->limit(10)
+                ->get()->each(function ($item) {
+                    $item->time_ago = Carbon::parse($item->updated_at)->diffForHumans();
+                    unset($item->updated_at);
+                });
             return ApiResponse::success([
-                'bills' => $bills
+                'bills' => $bills,
+                'total' => Bill::count()
             ]);
         } catch (\Throwable $th) {
             Log::error($th);
@@ -63,6 +70,16 @@ class BillController extends Controller
             $request->validate([
                 'status' => ['required', 'string']
             ]);
+            $status = $request->input('status');
+            if (
+                $status != 'PAID'
+                && $status != 'PENDING'
+                && $status != 'PROCESSING'
+                && $status != 'CANCELLED'
+                && $status != 'SHIPPED '
+            ) {
+                return ApiResponse::badRequest();
+            }
             $bill->status = $request->input('status');
             $bill->touch();
             return ApiResponse::success();
