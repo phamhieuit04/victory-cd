@@ -1,6 +1,18 @@
 <script setup lang="ts">
+import DeleteModal from '@/modals/DeleteModal.vue';
 import { Button } from '../ui/button';
-import { Pencil, Trash2, Ellipsis } from 'lucide-vue-next';
+import { Pencil, Trash2 } from 'lucide-vue-next';
+import { ref } from 'vue';
+
+const props = defineProps({
+    id: [String, Number],
+    type: String,
+    artistId: {
+        type: [String, Number],
+        default: null
+    }
+});
+var isDisplayDeleteModal = ref(false);
 </script>
 
 <template>
@@ -8,8 +20,11 @@ import { Pencil, Trash2, Ellipsis } from 'lucide-vue-next';
         <Button size="icon" variant="outline" class="cursor-pointer">
             <Pencil class="size-3.5" />
         </Button>
-        <Button size="icon" variant="outline" class="cursor-pointer">
+        <Button size="icon" variant="outline" class="cursor-pointer" @click="() => { isDisplayDeleteModal = true }">
             <Trash2 class="size-3.5" />
         </Button>
     </div>
+
+    <DeleteModal :isDisplay="isDisplayDeleteModal" :id="props.id" :type="props.type" :artistId="props.artistId"
+        @close_modal="() => { isDisplayDeleteModal = false }" />
 </template>
