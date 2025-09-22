@@ -1,11 +1,14 @@
 import api from '@/api/axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useLoadingStore } from './loading';
 
 export const useBillsStore = defineStore('bills', () => {
     const bills = ref([]);
     const total = ref(0);
     const getBills = async (offset) => {
+        const loadingStore = useLoadingStore();
+        loadingStore.setLoadingState(true);
         await api
             .get('/bills', {
                 params: {
@@ -14,6 +17,7 @@ export const useBillsStore = defineStore('bills', () => {
             })
             .then((res) => {
                 if (res.status == 200) {
+                    loadingStore.setLoadingState(false);
                     bills.value = res.data.data.bills;
                     total.value = res.data.data.total;
                 }
@@ -23,6 +27,8 @@ export const useBillsStore = defineStore('bills', () => {
             });
     };
     const updateBill = async (id) => {
+        const loadingStore = useLoadingStore();
+        loadingStore.setLoadingState(true);
         await api
             .put(`/bills/${id}`)
             .then((res) => {
@@ -32,6 +38,9 @@ export const useBillsStore = defineStore('bills', () => {
             })
             .catch((err) => {
                 console.log(err);
+            })
+            .finally(() => {
+                loadingStore.setLoadingState(false);
             });
     };
 

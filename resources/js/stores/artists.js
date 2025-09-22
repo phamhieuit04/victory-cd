@@ -1,6 +1,7 @@
 import api from '@/api/axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useLoadingStore } from './loading';
 
 export const useArtistsStore = defineStore('artists', () => {
     const artists = ref([]);
@@ -8,6 +9,8 @@ export const useArtistsStore = defineStore('artists', () => {
     const total = ref(0);
 
     const getArtists = async (offset) => {
+        const loadingStore = useLoadingStore();
+        loadingStore.setLoadingState(true);
         await api
             .get('/artists', {
                 params: {
@@ -16,6 +19,7 @@ export const useArtistsStore = defineStore('artists', () => {
             })
             .then((res) => {
                 if (res.status == 200) {
+                    loadingStore.setLoadingState(false);
                     artists.value = res.data.data.artists;
                     total.value = res.data.data.total;
                 }
@@ -25,6 +29,8 @@ export const useArtistsStore = defineStore('artists', () => {
             });
     };
     const getArtistSongs = async (id, offset) => {
+        const loadingStore = useLoadingStore();
+        loadingStore.setLoadingState(true);
         await api
             .get(`/artists/${id}`, {
                 params: {
@@ -33,6 +39,7 @@ export const useArtistsStore = defineStore('artists', () => {
             })
             .then((res) => {
                 if (res.status == 200) {
+                    loadingStore.setLoadingState(false);
                     artist.value.songs = res.data.data.user.songs;
                     artist.value.name = res.data.data.user.name;
                     total.value = res.data.data.total;

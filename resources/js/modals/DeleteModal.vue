@@ -7,6 +7,7 @@ import api from '@/api/axios';
 import { useArtistsStore } from '@/stores/artists';
 import { usePagesStore } from '@/stores/pages';
 import { useSongsStore } from '@/stores/songs';
+import { useLoadingStore } from '@/stores/loading';
 
 const props = defineProps({
     id: [String, Number],
@@ -19,10 +20,12 @@ const props = defineProps({
 });
 const modal = ref(null);
 const loading = ref(false)
+const emit = defineEmits(['close_modal']);
 
 const pagesStore = usePagesStore();
 const artistsStore = useArtistsStore();
 const songsStore = useSongsStore();
+const loadingStore = useLoadingStore();
 
 onClickOutside(modal, () => {
     emit('close_modal');
@@ -30,25 +33,31 @@ onClickOutside(modal, () => {
 
 const deleteItem = async (type) => {
     loading.value = true;
+    loadingStore.setLoadingState(true);
     await api.delete(`/${type}/${props.id}`).then(async (res) => {
         if (res.status == 200) {
             if (type == 'artists') {
                 await artistsStore.getArtists(pagesStore.currentPage);
+                loading.value = false;
+                loadingStore.setLoadingState(false);
             }
             if (type == 'songs') {
                 if (props.artistId) {
                     await artistsStore.getArtistSongs(props.artistId, pagesStore.currentPage);
                     songsStore.setSongs(artistsStore.getArtist().songs);
                     songsStore.setTotal(artistsStore.total);
+                    loading.value = false;
+                    loadingStore.setLoadingState(false);
                 } else {
                     await songsStore.getSongs(pagesStore.currentPage);
+                    loading.value = false;
+                    loadingStore.setLoadingState(false);
                 }
             }
         }
     }).catch((err) => {
         console.log(err);
     })
-    loading.value = false;
 }
 
 </script>

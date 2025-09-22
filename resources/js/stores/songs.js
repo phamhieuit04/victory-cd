@@ -1,12 +1,15 @@
 import api from '@/api/axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useLoadingStore } from './loading';
 
 export const useSongsStore = defineStore('songs', () => {
     const songs = ref([]);
     const total = ref(0);
 
     const getSongs = async (offset) => {
+        const loadingStore = useLoadingStore();
+        loadingStore.setLoadingState(true);
         await api
             .get('/songs', {
                 params: {
@@ -15,6 +18,7 @@ export const useSongsStore = defineStore('songs', () => {
             })
             .then((res) => {
                 if (res.status == 200) {
+                    loadingStore.setLoadingState(false);
                     songs.value = res.data.data.songs;
                     total.value = res.data.data.total;
                 }
