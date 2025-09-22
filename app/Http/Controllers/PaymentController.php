@@ -66,10 +66,10 @@ class PaymentController extends Controller
             $qrImage = file_get_contents($qrUrl);
 
             // Save image to server
-            Storage::disk('public')->put('qrcodes/' . $fileName, $qrImage);
+            Storage::disk('app')->put('qrcodes/' . $fileName, $qrImage);
 
             // Return QR image link
-            $bill->code_url = asset('storage/qrcodes/' . $fileName);
+            $bill->code_url = env('APP_URL') . '/qrcodes/' . $fileName;
             $bill->save();
 
             return ApiResponse::success($bill);
