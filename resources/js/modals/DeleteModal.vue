@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-vue-next';
 import { onClickOutside } from '@vueuse/core';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import api from '@/api/axios';
 import { useArtistsStore } from '@/stores/artists';
 import { usePagesStore } from '@/stores/pages';
@@ -18,7 +18,6 @@ const props = defineProps({
     }
 });
 const modal = ref(null);
-const emit = defineEmits(['close_modal']);
 const loading = ref(false)
 
 const pagesStore = usePagesStore();
@@ -34,7 +33,7 @@ const deleteItem = async (type) => {
     await api.delete(`/${type}/${props.id}`).then(async (res) => {
         if (res.status == 200) {
             if (type == 'artists') {
-                artistsStore.getArtists(pagesStore.currentPage);
+                await artistsStore.getArtists(pagesStore.currentPage);
             }
             if (type == 'songs') {
                 if (props.artistId) {
@@ -46,7 +45,6 @@ const deleteItem = async (type) => {
                 }
             }
         }
-        emit('close_modal');
     }).catch((err) => {
         console.log(err);
     })
@@ -60,7 +58,7 @@ const deleteItem = async (type) => {
         <Transition enter-active-class="transition duration-300 ease-out" enter-from-class="opacity-0 translate-y-2"
             enter-to-class="opacity-100 translate-y-0" leave-active-class="transition duration-200 ease-in"
             leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
-            <div v-if="props.isDisplay" :id="props.id"
+            <div v-show="props.isDisplay" :id="props.id"
                 class="flex z-10 fixed inset-0 items-center justify-center bg-black/70">
                 <div ref="modal"
                     class="dark:bg-[#09090b] bg-white p-6 rounded-md flex flex-col gap-2 w-[500px] dark:outline">
@@ -74,7 +72,7 @@ const deleteItem = async (type) => {
                             Cancel
                         </Button>
                         <Button :class="loading ? 'dark:bg-[#818182] dark:text-[#101013] bg-[#8b8b8d] text-[#fcfcfc] select-none'
-                            : 'cursor-pointer'" @click="deleteItem(props.type)">
+                            : 'cursor-pointer'" @click="deleteItem(props.type); $emit('close_modal')">
                             Continue
                             <Loader2 v-if="loading" class="w-4 h-4 animate-spin" />
                         </Button>

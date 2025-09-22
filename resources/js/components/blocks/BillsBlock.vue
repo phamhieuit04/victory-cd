@@ -30,7 +30,7 @@ onMounted(() => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                <TableRow v-for="bill in billsStore.bills" :key="bill.id" class="h-12">
+                <TableRow v-for="bill in billsStore.bills" :key="bill.id" class="h-14">
                     <TableCell class="font-medium text-center">
                         {{ bill.id }}
                     </TableCell>
@@ -51,7 +51,8 @@ onMounted(() => {
                     </TableCell>
                     <TableCell class="w-36">
                         <Button v-if="bill.status != 'SHIPPED' && bill.status == 'PAID'" class="cursor-pointer"
-                            variant="secondary">Update</Button>
+                            variant="secondary"
+                            @click="() => { billsStore.updateBill(bill.id); billsStore.getBills(pagesStore.currentPage) }">Update</Button>
                     </TableCell>
                 </TableRow>
             </TableBody>

@@ -22,6 +22,18 @@ export const useBillsStore = defineStore('bills', () => {
                 console.log(err);
             });
     };
+    const updateBill = async (id) => {
+        await api
+            .put(`/bills/${id}`)
+            .then((res) => {
+                if (res.status == 200) {
+                    console.log('Update thanh cong!');
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
-    return { bills, total, getBills };
+    return { bills, total, getBills, updateBill };
 });
