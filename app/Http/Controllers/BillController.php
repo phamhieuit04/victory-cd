@@ -67,20 +67,7 @@ class BillController extends Controller
     public function update(Request $request, Bill $bill)
     {
         try {
-            $request->validate([
-                'status' => ['required', 'string']
-            ]);
-            $status = $request->input('status');
-            if (
-                $status != 'PAID'
-                && $status != 'PENDING'
-                && $status != 'PROCESSING'
-                && $status != 'CANCELLED'
-                && $status != 'SHIPPED '
-            ) {
-                return ApiResponse::badRequest();
-            }
-            $bill->status = $request->input('status');
+            $bill->status = 'SHIPPED';
             $bill->touch();
             return ApiResponse::success();
         } catch (\Throwable $th) {
