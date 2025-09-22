@@ -42,27 +42,34 @@ class PaymentController extends Controller
                 ]
             ];
 
-            // $res = $payOSService->createPaymentLink($bill, $item);
-            // if (is_null($res)) {
-            //     return ApiResponse::dataNotfound();
-            // }
-            // $bill->checkout_url = $res['checkoutUrl'];
+            $res = $payOSService->createPaymentLink($bill, $item);
+            if (is_null($res)) {
+                return ApiResponse::dataNotfound();
+            }
 
-            // Create VietQR
-            $bankBin = "970422"; // MB Bank
-            $accountNo = "0823869522";
-            $accountName = "NGUYEN THI MINH NGOC";
+            $bill->checkout_url = $res['checkoutUrl'];
+
+            // get QR image from VietQR
+            $bin = $res['bin'];
+            $accountNumber = $res['accountNumber'];
+            $accountName = $res['accountName'];
             $amount = $bill->price;
+            $description = $res['description'];
+
+            // Create VietQR url
+            $qrUrl = "https://img.vietqr.io/image/{$bin}-{$accountNumber}-print.png"
+                . "?amount={$amount}"
+                . "&addInfo=" . urlencode($description)
+                . "&accountName=" . urlencode($accountName);
 
             $fileName = 'qr_' . $bill->order_code . '.png';
-
-            $qrUrl = "https://img.vietqr.io/image/{$bankBin}-{$accountNo}-compact.png"
-                . "?amount={$amount}&accountName=" . urlencode($accountName);
-
             $qrImage = file_get_contents($qrUrl);
-            Storage::disk('app')->put('qrcodes/' . $fileName, $qrImage);
 
-            $bill->code_url = env('APP_URL') . '/qrcodes/' . $fileName;
+            // Save image to server
+            Storage::disk('public')->put('qrcodes/' . $fileName, $qrImage);
+
+            // Return QR image link
+            $bill->code_url = asset('storage/qrcodes/' . $fileName);
             $bill->save();
 
             return ApiResponse::success($bill);
