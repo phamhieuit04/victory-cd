@@ -1,17 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { AudioLines, LayoutDashboard, UserRound } from 'lucide-vue-next';
-import Artists from '@/pages/Artists.vue';
-import Songs from '@/pages/Songs.vue';
-import Dashboard from '@/pages/Dashboard.vue';
+import {
+    AudioLines,
+    CircleDollarSign,
+    LayoutDashboard,
+    UserRound,
+} from 'lucide-vue-next';
+import DashboardPage from '@/pages/DashboardPage.vue';
+import ArtistsPage from '@/pages/ArtistsPage.vue';
+import SongsPage from '@/pages/SongsPage.vue';
+import BillsPage from '@/pages/BillsPage.vue';
 import ArtistsBlock from '@/components/blocks/ArtistsBlock.vue';
 import SongsBlock from '@/components/blocks/SongsBlock.vue';
+import BillsBlock from '@/components/blocks/BillsBlock.vue';
 
 export const routes = [
     {
         id: 0,
         path: '/dashboard',
         name: 'Dashboard',
-        component: Dashboard,
+        component: DashboardPage,
         icon: LayoutDashboard,
         isNavigation: true,
     },
@@ -19,7 +26,7 @@ export const routes = [
         id: 1,
         path: '/artists',
         name: 'Artists',
-        component: Artists,
+        component: ArtistsPage,
         icon: UserRound,
         isNavigation: true,
         children: [
@@ -39,10 +46,32 @@ export const routes = [
     {
         id: 2,
         path: '/songs',
-        name: 'Songs page',
-        component: Songs,
+        name: 'Songs',
+        component: SongsPage,
         icon: AudioLines,
         isNavigation: true,
+        children: [
+            {
+                path: '',
+                name: 'Songs page',
+                component: SongsBlock,
+            },
+        ],
+    },
+    {
+        id: 3,
+        path: '/bills',
+        name: 'Bills',
+        component: BillsPage,
+        icon: CircleDollarSign,
+        isNavigation: true,
+        children: [
+            {
+                path: '',
+                name: 'Bills page',
+                component: BillsBlock,
+            },
+        ],
     },
 ];
 
