@@ -3,6 +3,7 @@ import {
     AudioLines,
     CircleDollarSign,
     LayoutDashboard,
+    Plus,
     UserRound,
 } from 'lucide-vue-next';
 import DashboardPage from '@/pages/DashboardPage.vue';
@@ -12,6 +13,7 @@ import BillsPage from '@/pages/BillsPage.vue';
 import ArtistsBlock from '@/components/blocks/ArtistsBlock.vue';
 import SongsBlock from '@/components/blocks/SongsBlock.vue';
 import BillsBlock from '@/components/blocks/BillsBlock.vue';
+import UploadBlock from '@/components/blocks/UploadBlock.vue';
 
 export const routes = [
     {
@@ -70,6 +72,21 @@ export const routes = [
                 path: '',
                 name: 'Bills page',
                 component: BillsBlock,
+            },
+        ],
+    },
+    {
+        id: 4,
+        path: '/upload',
+        name: 'Upload',
+        component: BillsPage,
+        icon: Plus,
+        isNavigation: true,
+        children: [
+            {
+                path: '',
+                name: 'Upload page',
+                component: UploadBlock,
             },
         ],
     },

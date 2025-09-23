@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { useLoadingStore } from './loading';
 import { useArtistsStore } from './artists';
 import { usePagesStore } from './pages';
+import { useUploadStore } from './upload';
 
 export const useSongsStore = defineStore('songs', () => {
     const songs = ref([]);
@@ -30,27 +31,18 @@ export const useSongsStore = defineStore('songs', () => {
             });
     };
     const updateSong = async (id, name, thumbnail, artistId) => {
-        let uploadForm = new FormData();
-        uploadForm.append('file', thumbnail);
-        api.post('/upload', uploadForm, {
-            params: {
-                type: 'thumbnail',
-            },
-        })
+        let thumbnail_url = await upload(thumbnail, 'thumbnail');
+        if (thumbnail_url == null) {
+            return;
+        }
+        await api
+            .put(`/songs/${id}`, {
+                name: name,
+                thumbnail_url: thumbnail_url,
+            })
             .then((res) => {
                 if (res.status == 200) {
-                    api.put(`/songs/${id}`, {
-                        name: name,
-                        thumbnail_url: res.data.data.file_url,
-                    })
-                        .then((res) => {
-                            if (res.status == 200) {
-                                fetchSongs(artistId);
-                            }
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                        });
+                    fetchSongs(artistId);
                 }
             })
             .catch((err) => {
@@ -71,6 +63,30 @@ export const useSongsStore = defineStore('songs', () => {
         }
         loadingStore.setLoadingState(false);
     };
+    const upload = async (file, type) => {
+        const uploadStore = useUploadStore();
+        let uploadForm = new FormData();
+        uploadForm.append('file', file);
+        return await uploadStore.upload(uploadForm, type);
+    };
+    const postSong = async (songUrl, thumbnailUrl, songName, userId) => {
+        let formData = new FormData();
+        formData.append('name', songName);
+        formData.append('user_id', userId);
+        formData.append('song_url', songUrl);
+        formData.append('thumbnail_url', thumbnailUrl);
+        return await api
+            .post('/songs', formData)
+            .then((res) => {
+                if (res.status == 200) {
+                    return true;
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                return false;
+            });
+    };
     const setSongs = (value) => {
         songs.value = value;
     };
@@ -86,5 +102,7 @@ export const useSongsStore = defineStore('songs', () => {
         setTotal,
         updateSong,
         fetchSongs,
+        upload,
+        postSong,
     };
 });
