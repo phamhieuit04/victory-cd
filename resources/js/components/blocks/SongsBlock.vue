@@ -48,7 +48,7 @@ onMounted(() => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                <TableRow v-for="song in songsStore.songs" :key="song.id" class="h-12">
+                <TableRow v-for="song in songsStore.songs" :key="song.id">
                     <TableCell class="font-medium text-center">
                         {{ song.id }}
                     </TableCell>
@@ -56,7 +56,7 @@ onMounted(() => {
                         {{ song.name }}
                     </TableCell>
                     <TableCell>
-                        <img :src="song.thumbnail_url">
+                        <img class="size-10 aspect-square object-cover" :src="song.thumbnail_url">
                     </TableCell>
                     <TableCell>
                         {{ song.artist_name ?? artistsStore.artist.name }}
