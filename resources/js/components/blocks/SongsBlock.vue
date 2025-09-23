@@ -1,5 +1,5 @@
 <script setup>
-import api from '@/api/axios';
+import { Button } from "@/components/ui/button"
 import AppTooltip from '@/components/partials/AppTooltip.vue';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@/components/ui/table'
@@ -8,6 +8,7 @@ import { usePagesStore } from '@/stores/pages';
 import { useSongsStore } from '@/stores/songs';
 import { onMounted } from 'vue';
 import AppEmpty from '../partials/AppEmpty.vue';
+import { Play } from "lucide-vue-next";
 
 const props = defineProps({
     artistId: {
@@ -20,19 +21,9 @@ const pagesStore = usePagesStore();
 const artistsStore = useArtistsStore();
 const songsStore = useSongsStore();
 
-async function fetchSongs(offset) {
-    if (props.artistId) {
-        await artistsStore.getArtistSongs(props.artistId, offset);
-        songsStore.setSongs(artistsStore.getArtist().songs);
-        songsStore.setTotal(artistsStore.total);
-    } else {
-        await songsStore.getSongs(offset);
-    }
-}
-
 onMounted(() => {
     pagesStore.setCurrentPage(0);
-    fetchSongs(pagesStore.currentPage);
+    songsStore.fetchSongs(props.artistId);
 })
 </script>
 
@@ -61,6 +52,13 @@ onMounted(() => {
                     <TableCell>
                         {{ song.artist_name ?? artistsStore.artist.name }}
                     </TableCell>
+                    <TableCell>
+                        <Button variant="link">
+                            <a :href="song.song_url" target="_blank" class="cursor-pointer p-1">
+                                <Play />
+                            </a>
+                        </Button>
+                    </TableCell>
                     <TableCell class="w-36">
                         <AppTooltip :id="song.id" :type="'songs'" :artistId="props.artistId" />
                     </TableCell>
@@ -71,7 +69,7 @@ onMounted(() => {
             <PaginationContent v-slot="{ items }">
                 <template v-for="(item, index) in items" :key="index">
                     <PaginationItem
-                        @click="pagesStore.setCurrentPage(item.value - 1); fetchSongs(pagesStore.currentPage)"
+                        @click="pagesStore.setCurrentPage(item.value - 1); songsStore.fetchSongs(props.artistId)"
                         class="cursor-pointer" v-if="item.type === 'page'" :value="item.value"
                         :is-active="item.value === page">
                         {{ item.value }}

@@ -30,6 +30,6 @@ var isDisplayEditModal = ref(false);
     <DeleteModal :isDisplay="isDisplayDeleteModal" :id="props.id" :type="props.type" :artistId="props.artistId"
         @close_modal="() => { isDisplayDeleteModal = false }" />
 
-    <EditModal :isDisplay="isDisplayEditModal" :id="props.id" :type="props.type"
+    <EditModal :isDisplay="isDisplayEditModal" :id="props.id" :type="props.type" :artistId="props.artistId"
         @close_modal="() => { isDisplayEditModal = false }" />
 </template>

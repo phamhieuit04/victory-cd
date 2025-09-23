@@ -1,24 +1,39 @@
 <script setup>
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useArtistsStore } from '@/stores/artists';
+import { useSongsStore } from '@/stores/songs';
 
 const props = defineProps({
     id: [String, Number],
     isDisplay: Boolean,
-    type: String
+    type: String,
+    artistId: {
+        type: [String, Number],
+        default: null
+    }
 });
 
 const modal = ref(null);
 const name = ref("");
+const thumbnail = ref();
 const loading = ref(false);
 const emit = defineEmits(['close_modal']);
 
 const artistsStore = useArtistsStore();
+const songsStore = useSongsStore();
+
+const chooseThumbnail = (event) => {
+    thumbnail.value = event.target.files[0];
+}
+
+const updateSong = async (id, name, thumbnail, artistId) => {
+    emit('close_modal');
+    await songsStore.updateSong(id, name, thumbnail, artistId);
+}
 
 </script>
 
@@ -60,29 +75,21 @@ const artistsStore = useArtistsStore();
                                 your song here. Click save when you're done.</p>
                         </div>
                         <div class="flex flex-col gap-4">
-                            <div class="flex gap-2 items-center">
-                                <Label for="name" class="w-12">Name</Label>
-                                <Input id="name" placeholder="Em cua ngay hom qua" />
+                            <div class="flex gap-3 items-center">
+                                <Label for="name" class="w-24">Name</Label>
+                                <Input v-model="name" id="name" placeholder="Em cua ngay hom qua" />
                             </div>
-                            <div class="flex gap-2 items-center">
-                                <Label class="w-12">Artist</Label>
-                                <Select>
-                                    <SelectTrigger class="w-full">
-                                        <SelectValue placeholder="Select an artist" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem v-for="artist in artistsStore.artists" :value="artist.name">
-                                            {{ artist.name }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                            <div class="flex gap-3 items-center">
+                                <Label class="w-24">Thumbnail</Label>
+                                <Input @change="chooseThumbnail($event)" id="file" type="file"
+                                    accept=".png,.jpeg,.jpg" />
                             </div>
                         </div>
                         <div class="flex items-center justify-end gap-2">
                             <Button class="cursor-pointer" variant="outline" @click="$emit('close_modal')">
                                 Cancel
                             </Button>
-                            <Button :class="loading ? 'dark:bg-[#818182] dark:text-[#101013] bg-[#8b8b8d] text-[#fcfcfc] select-none'
+                            <Button @click="updateSong(props.id, name, thumbnail, props.artistId)" :class="loading ? 'dark:bg-[#818182] dark:text-[#101013] bg-[#8b8b8d] text-[#fcfcfc] select-none'
                                 : 'cursor-pointer'">
                                 Save change
                                 <Loader2 v-if="loading" class="w-4 h-4 animate-spin" />
