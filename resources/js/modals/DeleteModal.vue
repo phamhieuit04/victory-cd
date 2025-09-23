@@ -72,7 +72,7 @@ const deleteItem = async (type) => {
                 <div ref="modal"
                     class="dark:bg-[#09090b] bg-white p-6 rounded-md flex flex-col gap-2 w-[500px] dark:outline">
                     <h1 class="font-bold text-lg dark:text-[#fafafa] text-black">Are you absolutely sure?</h1>
-                    <p class="text-[#71717a] dark:text-[#a1a1aa] text-wrap text-justify">
+                    <p class="text-[#71717a] dark:text-[#a1a1aa] text-wrap text-justify text-sm">
                         This action cannot be undone. This will permanently delete your data and remove your data from
                         servers.
                     </p>

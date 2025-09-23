@@ -43,6 +43,7 @@ onMounted(() => {
                 <TableRow>
                     <TableHead class="text-center">Id</TableHead>
                     <TableHead>Name</TableHead>
+                    <TableHead>Thumbnail</TableHead>
                     <TableHead>Artist</TableHead>
                 </TableRow>
             </TableHeader>
@@ -53,6 +54,9 @@ onMounted(() => {
                     </TableCell>
                     <TableCell>
                         {{ song.name }}
+                    </TableCell>
+                    <TableCell>
+                        <img :src="song.thumbnail_url">
                     </TableCell>
                     <TableCell>
                         {{ song.artist_name ?? artistsStore.artist.name }}

@@ -2,6 +2,7 @@ import api from '@/api/axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useLoadingStore } from './loading';
+import { usePagesStore } from './pages';
 
 export const useArtistsStore = defineStore('artists', () => {
     const artists = ref([]);
@@ -49,9 +50,34 @@ export const useArtistsStore = defineStore('artists', () => {
                 console.log(err);
             });
     };
+    const updateArtist = async (id, name) => {
+        const loadingStore = useLoadingStore();
+        const pagesStore = usePagesStore();
+        loadingStore.setLoadingState(true);
+        api.put(`/artists/${id}`, {
+            name: name,
+        })
+            .then(async (res) => {
+                if (res.status == 200) {
+                    await getArtists(pagesStore.currentPage);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        loadingStore.setLoadingState(false);
+    };
     const getArtist = () => {
         return artist.value;
     };
 
-    return { artists, total, getArtists, getArtistSongs, artist, getArtist };
+    return {
+        artists,
+        total,
+        getArtists,
+        getArtistSongs,
+        artist,
+        getArtist,
+        updateArtist,
+    };
 });
