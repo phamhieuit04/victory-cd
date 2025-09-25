@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\Bill;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use PayOS\PayOS;
+use Ramsey\Uuid\Type\Integer;
 
 class PayOSService
 {
@@ -46,5 +48,11 @@ class PayOSService
             Log::error($th);
             return null;
         }
+    }
+
+    public function getPaymentStatus($orderCode)
+    {
+        $response = $this->payOS->getPaymentLinkInformation($orderCode);
+        return $response;
     }
 }

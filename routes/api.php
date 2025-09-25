@@ -16,4 +16,4 @@ Route::apiResource('bills', BillController::class)
 Route::apiResource('upload', UploadController::class)
     ->only('store');
 Route::apiResource('payment', PaymentController::class)
-    ->only('store');
+    ->only('store', 'show');

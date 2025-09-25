@@ -79,9 +79,24 @@ class PaymentController extends Controller
         }
     }
 
-    public function show(string $id)
+    public function show(PayOSService $payOSService, string $orderCode)
     {
-        //
+        try {
+            if (!$orderCode) {
+                return ApiResponse::internalServerError();
+            }
+
+            $res = $payOSService->getPaymentStatus($orderCode);
+
+            if (is_null($res)) {
+                return ApiResponse::dataNotfound();
+            }
+
+            return ApiResponse::success($res['status']);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return ApiResponse::internalServerError();
+        }
     }
 
     public function update(Request $request, string $id)
